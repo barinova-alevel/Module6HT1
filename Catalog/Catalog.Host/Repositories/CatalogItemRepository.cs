@@ -85,11 +85,46 @@ public class CatalogItemRepository : ICatalogItemRepository
         return item.Entity.Id;
     }
 
+    public async Task<int?> Update(int id, string name, string description, decimal price, int availableStock, int catalogBrandId, int catalogTypeId, string pictureFileName)
+    {
+        var item = new CatalogItem
+        {
+            Id = id,
+            CatalogBrandId = catalogBrandId,
+            CatalogTypeId = catalogTypeId,
+            Description = description,
+            Name = name,
+            PictureFileName = pictureFileName,
+            Price = price
+        };
+        
+        _dbContext.Update(item);
+        await _dbContext.SaveChangesAsync();
+
+        return item.Id;
+    }
+
     public async Task<CatalogItem?> GetById(int id)
     {
         return await _dbContext.CatalogItems
             .Include(i => i.CatalogBrand)
             .Include(i => i.CatalogType)
             .FirstOrDefaultAsync(_ => _.Id == id);
+    }
+
+    public Task<int?> Remove(int id)
+    {
+        return RepositoryHelper.Remove<CatalogItem>(_dbContext, id);
+    }
+}
+
+public static class RepositoryHelper
+{
+    public static async Task<int?> Remove<T>(ApplicationDbContext dbContext, int id)
+        where T: IBaseEntity, new()
+    {
+        dbContext.Remove(new T { Id = id });
+        await dbContext.SaveChangesAsync();
+        return id;
     }
 }

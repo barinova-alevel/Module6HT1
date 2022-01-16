@@ -27,5 +27,37 @@ namespace Catalog.Host.Repositories
 
             return new PaginatedItems<CatalogBrand>() { TotalCount = totalItems, Data = itemsOnPage };
         }
+
+        public async Task<int?> Add(string brand)
+        {
+            var item1 = new CatalogBrand
+            {
+                Brand = brand
+            };
+            var item = await _dbContext.AddAsync(item1);
+
+            await _dbContext.SaveChangesAsync();
+
+            return item.Entity.Id;
+        }
+
+        public async Task<int?> Update(int id, string name)
+        {
+            var item = new CatalogBrand
+            {
+                Id = id,
+                Brand = name
+            };
+
+            _dbContext.Update(item);
+            await _dbContext.SaveChangesAsync();
+
+            return item.Id;
+        }
+
+        public Task<int?> Remove(int id)
+        {
+            return RepositoryHelper.Remove<CatalogBrand>(_dbContext, id);
+        }
     }
 }

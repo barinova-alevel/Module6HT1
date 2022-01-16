@@ -3,7 +3,7 @@ using Catalog.Host.Data.Enums;
 
 namespace Catalog.Host.Data.Entities;
 
-public class CatalogItem
+public class CatalogItem: IBaseEntity
 {
     public int Id { get; set; }
 

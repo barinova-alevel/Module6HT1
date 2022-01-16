@@ -30,9 +30,15 @@ public class CatalogBffController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(CatalogItemDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(CatalogItemDto), (int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> GetById(IdRequest request)
     {
         var result = await _catalogService.GetCatalogItemByIdAsync(request.Id);
+        if (result == null)
+        {
+            return NotFound();
+        }
+
         return Ok(result);
     }
 
